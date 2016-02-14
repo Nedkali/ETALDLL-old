@@ -43,6 +43,7 @@ void LoadMPQ(const char* mpq)
 DWORD WINAPI D2Thread(LPVOID lpParam)
 {
 	SendCopyData(1, "Loading");
+	
 	unsigned int v = 0;
 	do	{
 		Sleep(500);
@@ -52,17 +53,18 @@ DWORD WINAPI D2Thread(LPVOID lpParam)
 	} while (v < 10);
 		
 	WideCharToMultiByte(0, 0, Prof.CdKeys, -1, Vars.szMpqfile, 128, 0, 0);
-
+	
 	SendCopyData(11, Vars.szMpqfile);
 	DefineOffsets();
 	
 	if (strlen(Vars.szMpqfile) > 0){
-		LoadMPQ(Vars.szMpqfile);
+		SendCopyData(11, "Load mpq");
+		//LoadMPQ(Vars.szMpqfile);
 	}
 
 	if (strlen(Vars.szScript) == 0){
 
-		SendCopyData(11, "Exiting dll");
+		SendCopyData(11, "No script = loader only - Exiting dll");
 		return true;
 	}
 
