@@ -137,17 +137,35 @@ void  Logincontrol()
 
 	case OOG_CHAR_SELECT:
 		Sleep(2000);
-		//int a = Prof.CharLoc;
-			switch (int(Prof.Charloc))
-			{
-			case 0:
-				Input::SendMouseClick(295, 355, 0);
-				break;
-			default:
-				break;
-			}
-
-		Input::SendMouseClick(295, 355, 0);
+		switch (int(Prof.Charloc))
+		{
+		case 0:
+			Input::SendMouseClick(150, 120, 0);
+			break;
+		case 1:
+			Input::SendMouseClick(370, 120, 0);
+			break;
+		case 2:
+			Input::SendMouseClick(150, 220, 0);
+			break;
+		case 3:
+			Input::SendMouseClick(370, 220, 0);
+			break;
+		case 4:
+			Input::SendMouseClick(150, 310, 0);
+			break;
+		case 5:
+			Input::SendMouseClick(370, 310, 0);
+			break;
+		case 6:
+			Input::SendMouseClick(150, 400, 0);
+			break;
+		case 7:
+			Input::SendMouseClick(370, 400, 0);
+			break;
+		default:
+			break;
+		}
 
 		Sleep(750);
 		break;
