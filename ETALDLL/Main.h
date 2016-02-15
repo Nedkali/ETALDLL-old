@@ -26,6 +26,14 @@ struct Variables
 	bool	bzladder;
 	unsigned int iCharPos;
 
+<<<<<<< HEAD
+=======
+	BOOL	bLoadedWithCGuard;
+	BOOL	bShutdownFromDllMain;
+	BOOL	bUseRawCDKey;
+
+	Module* pModule;
+>>>>>>> origin/master
 	HMODULE hModule;
 };
 

@@ -8,7 +8,7 @@
 #include "Main.h"
 #include "Offset.h"
 #include "D2Ptrs.h"
-
+#include "CommandLine.h"
 using namespace std;
 
 
@@ -42,25 +42,89 @@ void LoadMPQ(const char* mpq)
 
 DWORD WINAPI D2Thread(LPVOID lpParam)
 {
-	SendCopyData(1, "Loading");
-	
-	unsigned int v = 0;
-	do	{
-		Sleep(500);
-		if (GetModuleHandle("Bnclient.DLL") && GetModuleHandle("D2Launch.DLL") && GetModuleHandle("D2Net.DLL") && GetModuleHandle("D2Win.DLL"))
-			break;
-		++v;
-	} while (v < 10);
+	sLine* command;
+	SendCopyData(1, "Loading");	
 		
 	WideCharToMultiByte(0, 0, Prof.CdKeys, -1, Vars.szMpqfile, 128, 0, 0);
 	
 	SendCopyData(11, Vars.szMpqfile);
-	DefineOffsets();
-	
-	if (strlen(Vars.szMpqfile) > 0){
-		SendCopyData(11, "Load mpq");
-		//LoadMPQ(Vars.szMpqfile);
+
+	ParseCommandLine(GetCommandLineA());
+
+	command = GetCommand("-c0");
+
+	if (command)
+	{
+		Vars.bUseRawCDKey = 1;
+		const char *keys = (char*)command->szText;
+		int len = strlen(keys);
+		strncat_s(Vars.szClassic, keys, len);
 	}
+
+	command = GetCommand("-c1");
+
+	if (command)
+	{
+		const char *keys = (char*)command->szText;
+		int len = strlen(keys);
+		strncat_s(Vars.szClassic, keys, len);
+	}
+
+	command = GetCommand("-c2");
+
+	if (command)
+	{
+		const char *keys = (char*)command->szText;
+		int len = strlen(keys);
+		strncat_s(Vars.szClassic, keys, len);
+	}
+
+	command = GetCommand("-e0");
+
+	if (command)
+	{
+		const char *keys = (char*)command->szText;
+		int len = strlen(keys);
+		strncat_s(Vars.szLod, keys, len);
+	}
+
+	command = GetCommand("-e1");
+
+	if (command)
+	{
+		const char *keys = (char*)command->szText;
+		int len = strlen(keys);
+		strncat_s(Vars.szLod, keys, len);
+	}
+
+	command = GetCommand("-e2");
+
+	if (command)
+	{
+		const char *keys = (char*)command->szText;
+		int len = strlen(keys);
+		strncat_s(Vars.szLod, keys, len);
+	}
+
+	if (Vars.bUseRawCDKey == 1)
+	{
+		SendCopyData(11, "Load Raw Key");
+		InstallConditional();
+	}
+
+
+	command = GetCommand("-mpq");
+
+	if (command)
+	{
+		SendCopyData(11, "Load mpq");
+		LoadMPQ(command->szText);
+	}
+
+	//if (strlen(Vars.szMpqfile) > 0){
+	//	SendCopyData(11, "Load mpq");
+	//	//LoadMPQ(Vars.szMpqfile);
+	//}
 
 	if (strlen(Vars.szScript) == 0){
 
