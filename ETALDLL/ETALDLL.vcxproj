@@ -151,15 +151,22 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ArrayEx.h" />
+    <ClInclude Include="CommandLine.h" />
     <ClInclude Include="D2Handlers.h" />
+    <ClInclude Include="D2Intercepts.h" />
     <ClInclude Include="D2NetHandlers.h" />
     <ClInclude Include="D2Structs.h" />
     <ClInclude Include="Main.h" />
+    <ClInclude Include="Patch.h" />
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="SyncObj.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="CommandLine.cpp" />
     <ClCompile Include="D2Handlers.cpp" />
+    <ClCompile Include="D2Intercepts.cpp" />
     <ClCompile Include="D2NetHandlers.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Offset.cpp" />

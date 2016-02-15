@@ -42,7 +42,6 @@ BOOL APIENTRY DllMain( HMODULE hDll, DWORD  ul_reason_for_call, LPVOID lpReserve
 
 	switch (ul_reason_for_call){
 		case DLL_PROCESS_ATTACH:
-			MessageBoxA(NULL,"DLL Attached", "Debug", NULL);
 			HANDLE hMap = OpenFileMappingA(FILE_MAP_READ, false, "D2NT Profile");
 			if (!hMap){
 				return 0;
@@ -53,7 +52,7 @@ BOOL APIENTRY DllMain( HMODULE hDll, DWORD  ul_reason_for_call, LPVOID lpReserve
 				return 0;
 			}
 
-			memcpy(&Prof, mView, 1010);
+			memcpy(&Prof, mView, 1010); 
 			UnmapViewOfFile(mView);
 			CloseHandle(hMap);
 
@@ -74,10 +73,21 @@ BOOL APIENTRY DllMain( HMODULE hDll, DWORD  ul_reason_for_call, LPVOID lpReserve
 
 			//MessageBox(NULL, "Debug", "pausing", NULL);
 			DeleteDatFiles();
-			
+
+			unsigned int v = 0;
+			do {
+				Sleep(100);
+				if (GetModuleHandle("Bnclient.DLL") && GetModuleHandle("D2Launch.DLL") && GetModuleHandle("D2Net.DLL") && GetModuleHandle("D2Win.DLL"))
+					break;
+				++v;
+			} while (v < 10);
+			DefineOffsets();
+			InstallPatches();
+
 			if ((hD2Thread = CreateThread(NULL, NULL, D2Thread, NULL, NULL, NULL)) == NULL)
 				return FALSE;
 
+			MessageBoxA(NULL, "DLL Attached", "Debug", NULL);
 			break;
 	}
 	return TRUE;

@@ -2,6 +2,7 @@
 #include "D2Ptrs.h"
 #include "Offset.h"
 #include "Main.h"
+#include "Patch.h"
 
 #ifndef ArraySize
 #define ArraySize(x) (sizeof((x)) / sizeof((x)[0]))
@@ -48,52 +49,47 @@ DWORD GetDllOffset(int num)
 	return GetDllOffset(dlls[num & 0xff], num >> 8);
 }
 
-//void InstallPatches()
-//{
-//
-//	for (int x = 0; x < ArraySize(Patches); x++)
-//	{
-//		Patches[x].bOldCode = new BYTE[Patches[x].dwLen];
-//		::ReadProcessMemory(GetCurrentProcess(), (void*)Patches[x].dwAddr, Patches[x].bOldCode, Patches[x].dwLen, NULL);
-//		Patches[x].pFunc(Patches[x].dwAddr, Patches[x].dwFunc, Patches[x].dwLen);
-//	}
-//
-//}
-//
-//void RemovePatches()
-//{
-//
-//	for (int x = 0; x < ArraySize(Patches); x++)
-//	{
-//		WriteBytes((void*)Patches[x].dwAddr, Patches[x].bOldCode, Patches[x].dwLen);
-//		delete[] Patches[x].bOldCode;
-//	}
-//
-//}
+void InstallPatches()
+{
 
-//void InstallConditional()
-//{
-//	for (int x = 0; x < ArraySize(Conditional); x++)
-//	{
-//		Conditional[x].bOldCode = new BYTE[Conditional[x].dwLen];
-//		::ReadProcessMemory(GetCurrentProcess(), (void*)Conditional[x].dwAddr, Conditional[x].bOldCode, Conditional[x].dwLen, NULL);
-//		Conditional[x].pFunc(Conditional[x].dwAddr, Conditional[x].dwFunc, Conditional[x].dwLen);
-//	}
-//}
+	for (int x = 0; x < ArraySize(Patches); x++)
+	{
+		Patches[x].bOldCode = new BYTE[Patches[x].dwLen];
+		::ReadProcessMemory(GetCurrentProcess(), (void*)Patches[x].dwAddr, Patches[x].bOldCode, Patches[x].dwLen, NULL);
+		Patches[x].pFunc(Patches[x].dwAddr, Patches[x].dwFunc, Patches[x].dwLen);
+	}
 
-//void RemoveConditional()
-//{
-//	if (Vars.bUseRawCDKey)
-//	{
-//
-//		for (int x = 0; x < ArraySize(Conditional); x++)
-//		{
-//			WriteBytes((void*)Conditional[x].dwAddr, Conditional[x].bOldCode, Conditional[x].dwLen);
-//			delete[] Conditional[x].bOldCode;
-//		}
-//
-//	}
-//}
+}
+
+void RemovePatches()
+{
+
+	for (int x = 0; x < ArraySize(Patches); x++)
+	{
+		WriteBytes((void*)Patches[x].dwAddr, Patches[x].bOldCode, Patches[x].dwLen);
+		delete[] Patches[x].bOldCode;
+	}
+
+}
+
+void InstallConditional()
+{
+	for (int x = 0; x < ArraySize(Conditional); x++)
+	{
+		Conditional[x].bOldCode = new BYTE[Conditional[x].dwLen];
+		::ReadProcessMemory(GetCurrentProcess(), (void*)Conditional[x].dwAddr, Conditional[x].bOldCode, Conditional[x].dwLen, NULL);
+		Conditional[x].pFunc(Conditional[x].dwAddr, Conditional[x].dwFunc, Conditional[x].dwLen);
+	}
+}
+
+void RemoveConditional()
+{
+		for (int x = 0; x < ArraySize(Conditional); x++)
+		{
+			WriteBytes((void*)Conditional[x].dwAddr, Conditional[x].bOldCode, Conditional[x].dwLen);
+			delete[] Conditional[x].bOldCode;
+		}
+}
 
 BOOL WriteBytes(void *pAddr, void *pData, DWORD dwLen)
 {
@@ -129,15 +125,15 @@ void InterceptLocalCode(BYTE bInst, DWORD pAddr, DWORD pFunc, DWORD dwLen)
 	delete[] bCode;
 }
 
-//void PatchCall(DWORD dwAddr, DWORD dwFunc, DWORD dwLen)
-//{
-//	InterceptLocalCode(INST_CALL, dwAddr, dwFunc, dwLen);
-//}
+void PatchCall(DWORD dwAddr, DWORD dwFunc, DWORD dwLen)
+{
+	InterceptLocalCode(INST_CALL, dwAddr, dwFunc, dwLen);
+}
 
-//void PatchJmp(DWORD dwAddr, DWORD dwFunc, DWORD dwLen)
-//{
-//	InterceptLocalCode(INST_JMP, dwAddr, dwFunc, dwLen);
-//}
+void PatchJmp(DWORD dwAddr, DWORD dwFunc, DWORD dwLen)
+{
+	InterceptLocalCode(INST_JMP, dwAddr, dwFunc, dwLen);
+}
 
 void PatchBytes(DWORD dwAddr, DWORD dwValue, DWORD dwLen)
 {
@@ -149,8 +145,8 @@ void PatchBytes(DWORD dwAddr, DWORD dwValue, DWORD dwLen)
 	delete[] bCode;
 }
 
-//PatchHook *RetrievePatchHooks(PINT pBuffer)
-//{
-//	*pBuffer = ArraySize(Patches);
-//	return &Patches[0];
-//}
+PatchHook *RetrievePatchHooks(PINT pBuffer)
+{
+	*pBuffer = ArraySize(Patches);
+	return &Patches[0];
+}

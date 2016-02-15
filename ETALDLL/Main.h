@@ -68,6 +68,7 @@ struct Variables
 
 	BOOL	bLoadedWithCGuard;
 	BOOL	bShutdownFromDllMain;
+	BOOL	bUseRawCDKey;
 
 	Module* pModule;
 	HMODULE hModule;
