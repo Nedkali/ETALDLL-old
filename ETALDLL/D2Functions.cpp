@@ -25,8 +25,6 @@ void SendCopyData(int  code, char* data)// make this bool later on
 
 DWORD WINAPI MainThread(VOID* param)
 {
-	SendCopyData(D2NT_MGR_LOADING, "Loading");
-
 	Input* input = new Input;
 	input->Initialize();
 
@@ -45,11 +43,10 @@ DWORD WINAPI MainThread(VOID* param)
 			}
 			else
 			{
-				Sleep(1000);
+				Sleep(1000);				
 				ingame = true;
 				starter = true;
-				SendCopyData(D2NT_MGR_INGAME, "In Game");
-				SetWindowText(fpGetHwnd(), Prof.ScriptFile);
+				SetWindowText(fpGetHwnd(), "Etal - In Game");
 			}
 			break;
 		case ClientStateMenu:
@@ -57,7 +54,7 @@ DWORD WINAPI MainThread(VOID* param)
 			{
 				starter = false;
 				ingame = false;
-				SetWindowText(fpGetHwnd(), "Etal Test");
+				SetWindowText(fpGetHwnd(), "Etal");
 				Sleep(1000);
 			}
 			Logincontrol();
@@ -84,97 +81,75 @@ void  Logincontrol()
 	{
 
 	case OOG_MAIN_MENU:
-	{
-
-		if (Prof.Realm == 0)//SinglePlayer
 		{
-			Control* pControl = OOG::findControl(CONTROL_BUTTON, (char *)NULL, -1, 264, 324, 272, 35);
-			if (pControl && pControl->wText2) {
-				OOG::clickControl(pControl, 295, 315);
-				Sleep(1000);
-			}
-			return;
-		}
-
-
-		Control* pControl = OOG::findControl(CONTROL_BUTTON, (char *)NULL, -1, 264, 391, 272, 25);
-		if (pControl && pControl->wText2) {
-			char* cstr = "";
-			char* szLine = wchart_to_char(pControl->wText2);
-
-			if (Prof.Realm == 1) { cstr = "GATEWAY: U.S. WEST"; }
-			if (Prof.Realm == 2) { cstr = "GATEWAY: U.S. EAST"; }
-			if (Prof.Realm == 3) { cstr = "GATEWAY: ASIA"; }
-			if (Prof.Realm == 4) { cstr = "GATEWAY: EUROPE"; }
-
-			if (strcmp(cstr, szLine) != 0) {
-				if (!OOG::clickControl(pControl, 364, 375))
-					return;
-
-				Sleep(750);
-				if (!OOG::clickControl(pControl, -1, 320 + ((Prof.Realm * 24) + 12))) { return; }
-
-				//OK Button
-				pControl = OOG::findControl(CONTROL_BUTTON, (char *)NULL, -1, 281, 538, 96, 32);
-				if (pControl) {
-					if (!OOG::clickControl(pControl, 281, 515)) { return; }
+			
+			if (Prof.Realm == 0)//SinglePlayer
+			{
+				Control* pControl = OOG::findControl(CONTROL_BUTTON, (char *)NULL, -1, 264, 324, 272, 35);
+				if (pControl && pControl->wText2) {
+					OOG::clickControl(pControl, 295, 315);
+					Sleep(1000);
 				}
-				Sleep(750);
-			}
-			// Bnet connect
-			pControl = OOG::findControl(CONTROL_BUTTON, "BATTLE.NET", -1, -1, -1, -1, -1);
-
-			if (pControl) {
-				Sleep(50);
-				Input::SendMouseClick(295, 355, 0);
-				Sleep(50);
-			}
-			while (true) {
-				Sleep(250);
-				if (OOG::GetLocationID() == 9) { break; }
+				return;
 			}
 
+
+			Control* pControl = OOG::findControl(CONTROL_BUTTON, (char *)NULL, -1, 264, 391, 272, 25);
+			if (pControl && pControl->wText2) {
+				char* cstr = "";
+				char* szLine = wchart_to_char(pControl->wText2);
+
+				if (Prof.Realm == 1) { cstr = "GATEWAY: U.S. WEST";}
+				if (Prof.Realm == 2) { cstr = "GATEWAY: U.S. EAST";}
+				if (Prof.Realm == 3) { cstr = "GATEWAY: ASIA";}
+				if (Prof.Realm == 4) { cstr = "GATEWAY: EUROPE";}
+
+				if (strcmp(cstr, szLine) != 0) {
+					if (!OOG::clickControl(pControl, 364, 375))
+						return;
+
+					Sleep(750);
+					if (!OOG::clickControl(pControl, -1, 320 + ((Prof.Realm * 24) + 12))) { return; }
+
+					//OK Button
+					pControl = OOG::findControl(CONTROL_BUTTON, (char *)NULL, -1, 281, 538, 96, 32);
+					if (pControl) {
+						if (!OOG::clickControl(pControl, 281, 515)) { return; }
+					}
+					Sleep(750);
+				}
+				// Bnet connect
+				pControl = OOG::findControl(CONTROL_BUTTON, "BATTLE.NET", -1, -1, -1, -1, -1);
+
+				if (pControl) {
+					Sleep(50);
+					Input::SendMouseClick(295, 355, 0);
+					Sleep(50);
+				}
+				while (true) {
+					Sleep(250);
+					if (OOG::GetLocationID() == 9) { break; }
+				}
+
+			}
 		}
-	}
-	break;
+		break;
 
 	case OOG_CHAR_SELECT:
 		Sleep(2000);
 		//int a = Prof.CharLoc;
-		switch (int(Prof.Charloc))
-		{
-		case 0:
-			Input::SendMouseClick(150, 120, 0);
-			break;
-		case 1:
-			Input::SendMouseClick( 370, 120, 0);
-			break;
-		case 2:
-			Input::SendMouseClick(150, 220, 0);
-			break;
-		case 3:
-			Input::SendMouseClick(370, 220, 0);
-			break;
-		case 4:
-			Input::SendMouseClick(150, 310, 0);
-			break;
-		case 5:
-			Input::SendMouseClick(370, 310, 0);
-			break;
-		case 6:
-			Input::SendMouseClick(150, 400, 0);
-			break;
-		case 7:
-			Input::SendMouseClick(370, 400, 0);
-			break;
-		default:
-			break;
-		}
+			switch (int(Prof.Charloc))
+			{
+			case 0:
+				Input::SendMouseClick(295, 355, 0);
+				break;
+			default:
+				break;
+			}
 
-		Input::SendMouseClick(695, 555, 0);
+		Input::SendMouseClick(295, 355, 0);
 
 		Sleep(750);
-
 		break;
 
 	case OOG_DIFFICULTY:// Single Player difficulty select
@@ -194,7 +169,7 @@ void  Logincontrol()
 		Control* pControl = OOG::findControl(1, (char *)NULL, -1, 322, 342, 162, 19);
 		if (!pControl)
 			return;
-
+				
 		OOG::SetControlText(pControl, Prof.Account);
 		Sleep(750);
 
@@ -213,7 +188,7 @@ void  Logincontrol()
 		}
 		Sleep(500);
 	}
-	break;
+		break;
 	case	OOG_D2SPLASH://	//18 Spash
 		SetWindowText(fpGetHwnd(), "Etal Test");
 		Sleep(50);
@@ -235,7 +210,7 @@ void  Logincontrol()
 		//strcpy_s(temp1, temp);
 		//SendCopyData(10, temp1);		
 		break;
-	}
+	}	
 
 	return;
 }

@@ -373,7 +373,7 @@ bool OOG::SelectCharacter(const char* CharName)
 			}
 			if (strlen(Line) == strlen(CharName) && strstr(Line, CharName) != NULL)
 			{
-
+				
 				delete[] Line;
 				if (!clickControl(pControl, pControl->dwPosX + 100, pControl->dwPosY - 50))
 				{
