@@ -1,8 +1,17 @@
+//////////////////////////////////////////////////////////////////////
+// Structs.h
+//////////////////////////////////////////////////////////////////////
 #pragma once
+
+#include <Windows.h>
+
+#define SHIFTLEFT 0x0C
+#define MOUSELEFT 0x0F
+#define MOUSERIGHT 0x08
+
+
 #ifndef _D2STRUCTS_H
 #define _D2STRUCTS_H
-
-#include <windows.h>
 
 #pragma warning ( push )
 #pragma warning ( disable: 4201 )
@@ -16,13 +25,6 @@ struct Act;
 struct ActMisc;
 struct RosterUnit;
 struct OverheadMsg;
-struct Skill;
-
-struct SplitText
-{
-	wchar_t* lpwszText;
-	SplitText* lpsNext;
-};
 
 struct InventoryInfo {
 	int nLocation;
@@ -63,7 +65,7 @@ struct GfxCell {
 	BYTE cols;						//0x20
 };
 
-struct UnitInteraction {
+struct InteractStruct {
 	DWORD dwMoveType;			//0x00
 	UnitAny* lpPlayerUnit;		//0x04
 	UnitAny* lpTargetUnit;		//0x08
@@ -71,7 +73,6 @@ struct UnitInteraction {
 	DWORD dwTargetY;			//0x10
 	DWORD _1;					//0x14
 	DWORD _2;					//0x18
-	Skill *pSkill;
 };
 
 struct CellFile {
@@ -89,11 +90,10 @@ struct CellFile {
 };
 
 struct CellContext {
-	DWORD _1[13];					//0x00
+	DWORD nCellNo;					//0x00
+	DWORD _1[12];					//0x04
 	CellFile* pCellFile;			//0x34
-	DWORD _2[4];					//0x38
 };
-
 
 struct AutomapLayer {
 	DWORD nLayerNo;					//0x00
@@ -110,7 +110,7 @@ struct AutomapLayer2 {
 	DWORD nLayerNo;					//0x08
 };
 
-struct LevelTxt {
+struct LevelText {
 	DWORD dwLevelNo;				//0x00
 	DWORD _1[60];					//0x04
 	BYTE _2;						//0xF4
@@ -123,9 +123,16 @@ struct LevelTxt {
 	BYTE nObjPrb[8];				//0x19E
 };
 
+struct ControlPreferences
+{
+	DWORD dwType;//0x00
+				 // ..
+};
+
 struct ControlText {
 	wchar_t* wText; //0x00
-	DWORD _1[4];	//0x04
+	wchar_t* wText2;//0x04
+	DWORD _1[3];	//0x08
 	DWORD dwColor;	//0x14
 	DWORD _2;		//0x18
 	ControlText* pNext;//0x1C
@@ -133,29 +140,36 @@ struct ControlText {
 
 struct Control {
 	DWORD dwType;					//0x00
-	DWORD *_1;						//0x04 // unsure? definitely a ptr but not obvious, usually points to 6 when dwType is 6 I think
+	CellFile *pCellFile;				//0x04
 	DWORD dwDisabled;				//0x08
 	DWORD dwPosX;					//0x0C
 	DWORD dwPosY;					//0x10
 	DWORD dwSizeX;					//0x14
 	DWORD dwSizeY;					//0x18
-									// I think _2 thru _9 are a handler table of some sort
-	DWORD *_2;						//0x1C // some sort of function (maybe click?)
+	void(__fastcall *Initialize)(Control* pControl);//0x1c
 	DWORD _3;						//0x20
-	DWORD *_4;						//0x24 // some sort of function
+	DWORD *_4;						//0x24
 	DWORD *_5;						//0x28
 	DWORD _6;						//0x2C
-	DWORD *_7;						//0x30 // ptr to something...
-	DWORD *_8;						//0x34 // another random ptr... mostly dead ends when I examined them
+	DWORD *_7;						//0x30
+	DWORD *_8;						//0x34
 	DWORD _9;						//0x38
 	Control* pNext;					//0x3C
 	DWORD _10;						//0x40
-	DWORD unkState; 					//0x44 _11 0 when button avail to be clicked 1 when greyed - still need to look at this more
-	ControlText* pFirstText;			//0x48
-	ControlText* pLastText;			//0x4C
+	DWORD dwMaxLength;				//0x44
+	union {
+		ControlText* pFirstText;		//0x48
+		DWORD dwScrollEntries;		//0x48
+	};
+	union {
+		ControlText* pLastText;		//0x4C
+		DWORD dwScrollPosition;		//0x4C
+	};
 	ControlText* pSelectedText;		//0x50
 	DWORD dwSelectEnd;				//0x54
 	DWORD dwSelectStart;				//0x58
+										//wchar_t wText[0x1A];				//0x5C
+										//Control* pChildControl;			//0x90
 	union {
 		struct { //Textboxes
 			wchar_t wText[256];		//0x5C
@@ -171,42 +185,6 @@ struct Control {
 
 #pragma pack(push)
 #pragma pack(1)
-
-struct BnetData {
-	DWORD dwId;					//0x00
-	DWORD dwId2;				//0x04
-	BYTE _1[0xc];				//0x08
-	DWORD dwId3;				//0x14
-	WORD Unk3;					//0x18
-	BYTE _2;					//0x1A
-	char szGameName[0x16];		//0x1B
-	WORD _3;					//0x31
-	char szGameIP[0x10];		//0x33
-	BYTE _5[0x42];				//0x43
-	DWORD dwId4;				//0x85
-	char szAccountName[0x30];	//0x89
-	char szPlayerName[0x18];	//0xB9
-	char szRealmName[0x08];		//0xD1
-	BYTE _8[0x111];				//0xD9
-	BYTE nCharClass;			//0x1EA
-	BYTE nCharFlags;			//0x1EB
-	BYTE nMaxDiff;				//0x1EC
-	BYTE _9[0x1F];				//0x1ED
-	BYTE CreatedGameDifficulty;	//0x20C
-	void *_10;					//0x20D
-	BYTE _11[0x15];				//0x211
-	WORD _12;					//0x226
-	BYTE _13;					//0x228
-	char szRealmName2[0x18];	//0x229
-	char szGamePass[0x18];		//0x241
-	char szGameDesc[0x104];		//0x259
-	char channelname[0x20];		//+0x35b
-	BYTE _14[0x40];				//+0x37b
-	BYTE charlevel;				//+0x3bb
-	BYTE ladderflag;			//+0x3bc
-	DWORD passhash;				//+0x3bd
-	BYTE passlength;			//+0x3c1
-};
 
 struct RoomTile {
 	Room2* pRoom2;				//0x00
@@ -292,16 +270,6 @@ struct Level {
 	ActMisc* pMisc;			//0x1B4
 	DWORD _5[6];			//0x1BC
 	DWORD dwLevelNo;		//0x1D0
-	DWORD _6[3];			//0x1D4
-	union {
-		DWORD RoomCenterX[9];
-		DWORD WarpX[9];
-	};						//0x1E0
-	union {
-		DWORD RoomCenterY[9];
-		DWORD WarpY[9];
-	};						//0x204
-	DWORD dwRoomEntries;	//0x228
 };
 
 struct Room2 {
@@ -405,12 +373,6 @@ struct Stat {
 	DWORD dwStatValue;				//0x04
 };
 
-struct StatVector {
-	Stat* pStats;
-	WORD wCount;
-	WORD wSize;
-};
-
 // Credits to SVR, http://phrozenkeep.hugelaser.com/forum/viewtopic.php?f=8&t=31458&p=224066
 struct StatList {
 	DWORD _1;						//0x00
@@ -419,7 +381,9 @@ struct StatList {
 	DWORD dwUnitId;					//0x0C
 	DWORD dwFlags;					//0x10
 	DWORD _2[4];					//0x14
-	StatVector StatVec;				//0x24
+	Stat *pStat;					//0x24
+	WORD wStatCount1;				//0x28
+	WORD wnSize;					//0x2A
 	StatList *pPrevLink;			//0x2C
 	DWORD _3;						//0x30
 	StatList *pPrev;				//0x34
@@ -427,9 +391,8 @@ struct StatList {
 	StatList *pNext;				//0x3C
 	StatList *pSetList;				//0x40
 	DWORD _5;						//0x44
-	StatVector SetStatVec;			//0x48
-	DWORD _6[2];					//0x50
-	DWORD StateBits[6];				//0x58
+	Stat *pSetStat;					//0x48
+	WORD wSetStatCount;				//0x4C
 };
 
 struct Inventory {
@@ -458,14 +421,14 @@ struct SkillInfo {
 };
 
 struct Skill {
-	SkillInfo *pSkillInfo;			//0x00
-	Skill *pNextSkill;				//0x04
-	DWORD _1[8];						//0x08
-	DWORD dwSkillLevel;				//0x28
-	DWORD _2[2];						//0x2C
-	DWORD ItemId;					//0x34 0xFFFFFFFF if not a charge
-	DWORD ChargesLeft;				//0x38 
-	DWORD IsCharge;					//0x3C 1 for charge, else 0
+	SkillInfo *pSkillInfo;         //0x00
+	Skill *pNextSkill;            //0x04
+	DWORD _1[8];            //0x08
+	DWORD dwSkillLevel;         //0x28
+	DWORD _2[2];            //0x2C
+	DWORD ItemId;            //0x34 0xFFFFFFFF if not a charge
+	DWORD ChargesLeft;         //0x38 
+	DWORD IsCharge;            //0x3C 1 for charge, else 0
 };//size = 0x40
 
 struct Info {
@@ -477,39 +440,34 @@ struct Info {
 
 struct ItemData {
 	DWORD dwQuality;				//0x00
-	DWORD dwSeed[2];				//0x04
+	DWORD _1[2];					//0x04
 	DWORD dwItemFlags;				//0x0C 1 = Owned by player, 0xFFFFFFFF = Not owned
-	DWORD dwFingerPrint;			//0x10 Initial seed
-	DWORD _1;						//0x14 CommandFlags?
+	DWORD _2[2];					//0x10
 	DWORD dwFlags;					//0x18
-	DWORD _2[2];					//0x1C
-	DWORD dwActionStamp;			//0x24 Changes when an item is changed
-	DWORD dwFileIndex;				//0x28 Data file index UniqueItems.txt etc.
+	DWORD _3[3];					//0x1C
+	DWORD dwQuality2;				//0x28
 	DWORD dwItemLevel;				//0x2C
-	WORD wItemFormat;				//0x30
-	WORD wRarePrefix;				//0x32
-	WORD wRareSuffix;				//0x34
-	WORD wAutoPrefix;				//0x36
-	WORD wMagicPrefix[3];			//0x38
-	WORD wMagicSuffix[3];			//0x3E
-	BYTE BodyLocation;				//0x44 Not always cleared
+	DWORD _4[2];					//0x30
+	WORD wPrefix;					//0x38
+	WORD _5[2];						//0x3A
+	WORD wSuffix;					//0x3E
+	DWORD _6;						//0x40
+	BYTE BodyLocation;				//0x44
 	BYTE ItemLocation;				//0x45 Non-body/belt location (Body/Belt == 0xFF)
-	WORD _4;						//0x46
-	BYTE bEarLevel;					//0x48
-	BYTE bInvGfxIdx;				//0x49
-	char szPlayerName[16];			//0x4A Personalized / Ear name
-	Inventory *pOwnerInventory;		//0x5C Socketed Items owner Inv
+	BYTE _7;						//0x46
+	WORD _8;						//0x47
+	DWORD _9[4];					//0x48
+	Inventory *pOwnerInventory;		//0x5C
 	DWORD _10;						//0x60
-	UnitAny *pNextInvItem;			//0x64 Next item in socketed item if OwnerInventory is set
-	BYTE GameLocation;				//0x68 Location per docs.d2bs.org (unit.location)
+	UnitAny *pNextInvItem;			//0x64
+	BYTE _11;						//0x68
 	BYTE NodePage;					//0x69 Actual location, this is the most reliable by far
 	WORD _12;						//0x6A
-	WORD _13[12];					//0x6C
+	DWORD _13[6];					//0x6C
 	UnitAny *pOwner;				//0x84
 };
 
-
-struct ItemTxt {
+struct ItemText {
 	wchar_t szName2[0x40];			//0x00
 	union {
 		DWORD dwCode;
@@ -526,7 +484,7 @@ struct ItemTxt {
 	BYTE fQuest;					//0x12A
 };
 
-struct MonsterTxt {
+struct MonsterText {
 	BYTE _1[0x6];					//0x00
 	WORD nLocaleTxtNo;				//0x06
 	WORD flag;						//0x08
@@ -606,6 +564,30 @@ struct ObjectPath {
 									//Leaving rest undefined, use Path
 };
 
+struct myUnit
+{
+	DWORD _dwPrivateType;
+	DWORD dwUnitId;
+	DWORD dwClassId;
+	DWORD dwType;
+	DWORD dwMode;
+	char szName[128];
+};
+
+
+
+struct invUnit
+{
+	DWORD _dwPrivateType;
+	DWORD dwUnitId;
+	DWORD dwClassId;
+	DWORD dwType;
+	DWORD dwMode;
+	char szName[128];
+	DWORD dwOwnerId;
+	DWORD dwOwnerType;
+};
+
 struct UnitAny {
 	DWORD dwType;					//0x00
 	DWORD dwTxtFileNo;				//0x04
@@ -641,15 +623,7 @@ struct UnitAny {
 	StatList *pStats;				//0x5C
 	Inventory *pInventory;			//0x60
 	Light *ptLight;					//0x64
-	DWORD dwStartLightRadius;               //0x68
-	WORD nPl2ShiftIdx;                              //0x6C
-	WORD nUpdateType;                               //0x6E
-	UnitAny* pUpdateUnit;                           //0x70 - Used when updating unit.
-	DWORD* pQuestRecord;                    //0x74
-	DWORD bSparklyChest;                    //0x78 bool
-	DWORD* pTimerArgs;                              //0x7C
-	DWORD dwSoundSync;                              //0x80
-	DWORD _6[2];                                    //0x84
+	DWORD _6[9];					//0x68
 	WORD wX;						//0x8C
 	WORD wY;						//0x8E
 	DWORD _7;						//0x90
@@ -663,14 +637,42 @@ struct UnitAny {
 	DWORD dwFlags2;					//0xC8
 	DWORD _10[5];					//0xCC
 	UnitAny *pChangedNext;			//0xE0
-	UnitAny *pListNext;				//0xE4 -> 0xD8
-	UnitAny *pRoomNext;				//0xE8
+	UnitAny *pRoomNext;				//0xE4
+	UnitAny *pListNext;				//0xE8 -> 0xD8
 };
 
-struct UnitHashTable
-{
-	UnitAny* table[128];
+struct BnetData {
+	DWORD dwId;					//0x00
+	DWORD dwId2;				//0x04	
+	BYTE _12[13];				//0xC0
+								//DWORD dwId3;				//0x14
+								//WORD Unk3;					//0x18	
+	BYTE _13[6];				//0xC0
+	char szGameName[22];		//0x1A
+	char szGameIP[16];			//0x30
+	DWORD _2[15];				//0x40
+	DWORD dwId4;				//0x80
+	BYTE _3[5];					//0x84
+	char szAccountName[48];		//0x88
+	char szPlayerName[24];		//0xB8
+	char szRealmName[8];		//0xD0
+	BYTE _4[273];				//0xD8
+	BYTE nCharClass;			//0x1E9
+	BYTE nCharFlags;			//0x1EA
+	BYTE nMaxLvlDifference;		//0x1EB
+	BYTE _5[31];				//0x1EC
+	BYTE nDifficulty;			//0x20B
+	void *_6;					//0x20C
+	DWORD _7[3];				//0x210
+	WORD _8;					//0x224
+	BYTE _9[7];					//0x226
+	char szRealmName2[24];		//0x227
+	char szGamePass[24];		//0x23F
+	char szGameDesc[256];		//0x257
+	WORD _10;					//0x348
+	BYTE _11;					//0x34B
 };
+
 
 struct WardenClientRegion_t {
 	DWORD cbAllocSize; //+00
@@ -702,6 +704,16 @@ struct WardenClient_t {
 struct WardenIATInfo_t {
 	DWORD offsetModuleName;
 	DWORD offsetImportTable;
+};
+
+struct AttackStruct {
+	DWORD dwAttackType;			//0x00
+	UnitAny* lpPlayerUnit;		//0x04
+	UnitAny* lpTargetUnit;		//0x08
+	DWORD dwTargetX;			//0x0C
+	DWORD dwTargetY;			//0x10
+	DWORD _1;					//0x14
+	DWORD _2;					//0x18
 };
 
 #pragma pack(push)
@@ -760,55 +772,6 @@ struct sgptDataTable {
 	MpqTable*	pStorePage;
 	DWORD		dwStorePageRecords;
 	MpqTable*	pElemTypes;
-};
-
-struct MessageHandlerList
-{
-	DWORD message;
-	DWORD unk_4;
-	DWORD(__stdcall *handler)(void*);
-	struct MessageHandlerList* next;
-};
-
-struct MessageHandlerHashTable
-{
-	struct MessageHandlerList** table;
-	DWORD length;
-};
-
-struct WindowHandlerHashTable
-{
-	struct WindowHandlerList** table;
-	DWORD length;
-};
-
-struct WindowHandlerList
-{
-	DWORD unk_0;
-	HWND hWnd;
-	DWORD unk_8;
-	struct MessageHandlerHashTable* msgHandlers;
-	struct WindowHandlerList* next;
-};
-
-// Not sure of the location of handler and this struct inside Info.
-// Could be this struct is later and handler is earlier, but this is the safest
-// for now.
-struct TransactionDialogsLine_t
-{
-	wchar_t text[120];				// 0x000
-	DWORD unk[6];					// 0x0F0
-	void(__stdcall *handler)();	// 0x108
-	DWORD bMaybeSelectable;			// 0x10C
-};
-
-struct TransactionDialogsInfo_t
-{
-	DWORD unk[0x14];						// 0x000
-	DWORD numLines;							// 0x050
-	DWORD unk_2[0x5];						// 0x054
-	TransactionDialogsLine_t dialogLines[10];	// 0x068
-	void* something;						// 0xB08
 };
 
 #pragma warning ( pop )

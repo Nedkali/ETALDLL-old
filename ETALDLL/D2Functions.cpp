@@ -1,72 +1,31 @@
+#include "OOG.h"
 
+Profile  Prof;
+Variables Vars;
 
-#include <vector>
-
-#include "D2Handlers.h"
-#include "D2NetHandlers.h"
-
-#include "Main.h"
-#include "Offset.h"
-#include "D2Ptrs.h"
-
-using namespace std;
-
-
-
-bool  SendCopyData(unsigned int  code, char* data) {
-
-	HWND EtalhWnd = FindWindowA(NULL, "Etal Manager");
+void SendCopyData(int  code, char* data)// make this bool later on
+{
+	HWND EtalhWnd = FindWindow(NULL, "Etal Manager");
 	if (!EtalhWnd)
-		return false;
-	if (data == NULL)
-		data = "";
-	data = data + char(0);
+	{
+		return;
+	}
 	DWORD thwnd = GetCurrentProcessId();
-	COPYDATASTRUCT* aCopy = new COPYDATASTRUCT();
-	aCopy->dwData = code;
-	aCopy->cbData = strlen(data) + 1;
-	aCopy->lpData = data;
 
-	if (SendMessageA(EtalhWnd, WM_COPYDATA, thwnd, (LPARAM)aCopy))
-		return true;
-	return false;
+	char* lpszString = data;
+	COPYDATASTRUCT cds;
+	cds.dwData = code;
+	cds.cbData = sizeof(TCHAR) * (strlen(lpszString) + 1);
+	cds.lpData = lpszString;
+	//bool b = SendMessage(EtalhWnd, WM_COPYDATA, thwnd, (LPARAM)&cds) != 0;
+	SendMessage(EtalhWnd, WM_COPYDATA, thwnd, (LPARAM)&cds);
+	return;
 }
 
-void LoadMPQ(const char* mpq)
+
+DWORD WINAPI MainThread(VOID* param)
 {
-	D2WIN_InitMPQ("D2Win.DLL", mpq, NULL, 0, 0);
-	*p_BNCLIENT_XPacKey = *p_BNCLIENT_ClassicKey = *p_BNCLIENT_KeyOwner = NULL;
-	BNCLIENT_DecodeAndLoadKeys();
-
-}
-
-DWORD WINAPI D2Thread(LPVOID lpParam)
-{
-	SendCopyData(1, "Loading");
-	
-	unsigned int v = 0;
-	do	{
-		Sleep(500);
-		if (GetModuleHandle("Bnclient.DLL") && GetModuleHandle("D2Launch.DLL") && GetModuleHandle("D2Net.DLL") && GetModuleHandle("D2Win.DLL"))
-			break;
-		++v;
-	} while (v < 10);
-		
-	WideCharToMultiByte(0, 0, Prof.CdKeys, -1, Vars.szMpqfile, 128, 0, 0);
-	
-	SendCopyData(11, Vars.szMpqfile);
-	DefineOffsets();
-	
-	if (strlen(Vars.szMpqfile) > 0){
-		SendCopyData(11, "Load mpq");
-		//LoadMPQ(Vars.szMpqfile);
-	}
-
-	if (strlen(Vars.szScript) == 0){
-
-		SendCopyData(11, "No script = loader only - Exiting dll");
-		return true;
-	}
+	SendCopyData(D2NT_MGR_LOADING, "Loading");
 
 	Input* input = new Input;
 	input->Initialize();
@@ -89,7 +48,8 @@ DWORD WINAPI D2Thread(LPVOID lpParam)
 				Sleep(1000);
 				ingame = true;
 				starter = true;
-				SetWindowText(fpGetHwnd(), "Etal - In Game");
+				SendCopyData(D2NT_MGR_INGAME, "In Game");
+				SetWindowText(fpGetHwnd(), Prof.ScriptFile);
 			}
 			break;
 		case ClientStateMenu:
@@ -97,7 +57,7 @@ DWORD WINAPI D2Thread(LPVOID lpParam)
 			{
 				starter = false;
 				ingame = false;
-				SetWindowText(fpGetHwnd(), "Etal");
+				SetWindowText(fpGetHwnd(), "Etal Test");
 				Sleep(1000);
 			}
 			Logincontrol();
@@ -114,8 +74,6 @@ DWORD WINAPI D2Thread(LPVOID lpParam)
 	}
 
 	return 0;
-
-	return true;
 
 }
 
@@ -182,11 +140,41 @@ void  Logincontrol()
 
 	case OOG_CHAR_SELECT:
 		Sleep(2000);
-		OOG::SelectCharacter(Prof.CharName);
-		//if (!OOG::SelectCharacter(Prof.CharName)) {
-		//	MessageBoxA(NULL, "Character not found", "Error", NULL);
-		//}
+		//int a = Prof.CharLoc;
+		switch (int(Prof.Charloc))
+		{
+		case 0:
+			Input::SendMouseClick(150, 120, 0);
+			break;
+		case 1:
+			Input::SendMouseClick( 370, 120, 0);
+			break;
+		case 2:
+			Input::SendMouseClick(150, 220, 0);
+			break;
+		case 3:
+			Input::SendMouseClick(370, 220, 0);
+			break;
+		case 4:
+			Input::SendMouseClick(150, 310, 0);
+			break;
+		case 5:
+			Input::SendMouseClick(370, 310, 0);
+			break;
+		case 6:
+			Input::SendMouseClick(150, 400, 0);
+			break;
+		case 7:
+			Input::SendMouseClick(370, 400, 0);
+			break;
+		default:
+			break;
+		}
+
+		Input::SendMouseClick(695, 555, 0);
+
 		Sleep(750);
+
 		break;
 
 	case OOG_DIFFICULTY:// Single Player difficulty select
@@ -227,7 +215,7 @@ void  Logincontrol()
 	}
 	break;
 	case	OOG_D2SPLASH://	//18 Spash
-		SetWindowText(fpGetHwnd(), "Diabase Mule");
+		SetWindowText(fpGetHwnd(), "Etal Test");
 		Sleep(50);
 		Input::SendMouseClick(10, 10, 0);
 		Sleep(2000);
@@ -251,3 +239,4 @@ void  Logincontrol()
 
 	return;
 }
+
