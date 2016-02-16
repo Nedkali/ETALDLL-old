@@ -1,5 +1,5 @@
 #include "OOG.h"
-
+#include "Offset.h"
 Profile  Prof;
 Variables Vars;
 
@@ -31,6 +31,19 @@ DWORD WINAPI MainThread(VOID* param)
 	bool starter = true;
 	bool ingame = false;
 
+	const char *ckey = (char*)"CLASSIC_KEY_NO_DASHES";
+	int len = strlen(ckey);
+	strncat_s(Vars.szClassic, ckey, len);
+
+	const char *xkey = (char*)"XPAC_KEY_NO_DASHES";
+	int len1 = strlen(xkey);
+	strncat_s(Vars.szLod, xkey, len1);
+	if (Vars.szClassic && Vars.szLod != NULL) {
+		SendCopyData(11, "Loading Raw Keys");
+		SendCopyData(11, Vars.szClassic);
+		SendCopyData(11, Vars.szLod);
+	}
+	InstallConditional();
 
 	while (true)
 	{

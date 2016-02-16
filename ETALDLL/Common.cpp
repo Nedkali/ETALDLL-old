@@ -2,7 +2,6 @@
 // Common.cpp
 //////////////////////////////////////////////////////////////////////
 #include "Common.h"
-
 wchar_t* char_to_wchart(const char* str)
 {
 	wchar_t* buf = NULL;

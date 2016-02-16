@@ -12,12 +12,14 @@
 #include "Constants.h"
 #include "Input.h"
 #include "Main.h"
-
+#include "D2Intercepts.h"
 
 
 // Some buttons
 #define BUTTON_SP findControl(CONTROL_BUTTON, 5106, -1, 264,324,272,35)
 DWORD WINAPI MainThread(VOID*);
+VOID __fastcall ClassicSTUB();
+VOID __fastcall LodSTUB();
 void  Logincontrol();
 
 enum ClientGameState

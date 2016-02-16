@@ -8,6 +8,7 @@
 #include "Constants.h"
 #include "Input.h"
 #include "D2Structs.h"
+#include "Offset.h"
 
 
 void CheckStruct()
@@ -23,7 +24,7 @@ void WaitForDlls()
 	unsigned int v = 0;
 	do {
 		Sleep(500);
-		if (GetModuleHandle("Bnclient.DLL") && GetModuleHandle("D2Launch.DLL") && GetModuleHandle("D2Net.DLL"))
+		if (GetModuleHandle("Bnclient.dll") && GetModuleHandle("D2Launch.dll") && GetModuleHandle("D2Net.dll") && GetModuleHandle("D2Win.dll"))
 			break;
 		++v;
 	} while (v < 10);

@@ -79,7 +79,6 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>D:\My Documents\GitHub\EtalManager\Etal Manager\bin\Release\</OutDir>
     <TargetName>D2ETAL</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -157,15 +156,20 @@
   <ItemGroup>
     <ClInclude Include="Common.h" />
     <ClInclude Include="Constants.h" />
+    <ClInclude Include="D2Intercepts.h" />
+    <ClInclude Include="Offset.h" />
     <ClInclude Include="OOG.h" />
     <ClInclude Include="D2Pointers.h" />
     <ClInclude Include="D2Structs.h" />
     <ClInclude Include="Input.h" />
     <ClInclude Include="Main.h" />
+    <ClInclude Include="Patch.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Common.cpp" />
+    <ClCompile Include="D2Intercepts.cpp" />
+    <ClCompile Include="Offset.cpp" />
     <ClCompile Include="OOG.cpp" />
     <ClCompile Include="D2Functions.cpp" />
     <ClCompile Include="D2Pointers.cpp" />

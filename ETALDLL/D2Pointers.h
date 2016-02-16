@@ -3,9 +3,11 @@
 //////////////////////////////////////////////////////////////////////
 #pragma once
 
+#ifndef __D2PTRS_H__
+#define __D2PTRS_H__
+#endif
 #include <Windows.h>
 #include "D2Structs.h"
-//#include "D2Helpers.h"
 
 class Pointer
 {
@@ -26,11 +28,13 @@ private:
 #define FPTR(CALL_TYPE, FUNC_NAME, PARAMETERS, DLL, OFFSET) typedef CALL_TYPE fp##FUNC_NAME##_t PARAMETERS; fp##FUNC_NAME##_t* fp##FUNC_NAME = (fp##FUNC_NAME##_t*)Pointer::GetDllOffset(DLL, OFFSET);
 #define VPTR(VAR_TYPE, VAR_NAME, DLL, OFFSET) typedef VAR_TYPE VAR_NAME##_t; VAR_NAME##_t* vp##VAR_NAME = (VAR_NAME##_t*)Pointer::GetDllOffset(DLL, OFFSET);
 #define APTR(ASM_NAME, DLL, OFFSET) extern DWORD ap##ASM_NAME;
+
 //#define APTR(ASM_NAME, DLL, OFFSET) extern DWORD* Asm_##dll##_##name##(VOID); static DWORD dll##_##name = *Asm_##dll##_##name##();
 #else
 #define FPTR(CALL_TYPE, FUNC_NAME, PARAMETERS, DLL, OFFSET) typedef CALL_TYPE fp##FUNC_NAME##_t PARAMETERS; extern fp##FUNC_NAME##_t* fp##FUNC_NAME;
 #define VPTR(VAR_TYPE, VAR_NAME, DLL, OFFSET) typedef VAR_TYPE VAR_NAME##_t; extern VAR_NAME##_t* vp##VAR_NAME;
 #define APTR(ASM_NAME, DLL, OFFSET) extern DWORD ap##ASM_NAME;
+
 //#define APTR(ASM_NAME, DLL, OFFSET) extern DWORD* Asm_##dll##_##name##(VOID); static DWORD dll##_##name = *Asm_##dll##_##name##();
 #endif
 
@@ -124,8 +128,6 @@ FPTR(void* __fastcall, SetControlText, (Control* box, wchar_t* text), "D2Win.dll
 
 FPTR(void __fastcall, DrawText, (const wchar_t* wstr, int x, int y, DWORD color, DWORD unk), "D2Win.dll", 0x13B30)
 
-
-
 //////////////////////////////////////////////////////////////////////
 // D2Win Variable Pointers
 //////////////////////////////////////////////////////////////////////
@@ -143,8 +145,6 @@ FPTR(char __cdecl, DecodeAndLoadKeys, (), "Bnclient.dll", 0x10920)
 ////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-
-#define _D2PTRS_END	D2GAME_Rand
 
 #undef FPTR
 #undef VPTR
