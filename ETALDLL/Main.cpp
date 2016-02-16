@@ -10,7 +10,13 @@
 #include "D2Structs.h"
 
 
-
+void CheckStruct()
+{
+	MessageBoxA(NULL, Prof.GameName, "Debug", NULL);
+	MessageBoxA(NULL, Prof.GamePass, "Debug", NULL);
+	MessageBoxA(NULL, Prof.MpqFile, "Debug", NULL);
+	MessageBoxA(NULL, Prof.ScriptFile, "Debug", NULL);
+}
 
 void WaitForDlls()
 {
@@ -28,20 +34,20 @@ BOOL APIENTRY DllMain( HMODULE hModule, DWORD  ul_reason_for_call, LPVOID lpRese
 	switch (ul_reason_for_call)
 	{
 	case DLL_PROCESS_ATTACH:
-		int a = sizeof(Prof);//place mouse over "sizeof" to find struct size
+		int profsize = sizeof(Prof);//place mouse over "sizeof" to find struct size
 		HANDLE hMap = OpenFileMappingA(FILE_MAP_READ, false, "D2NT Profile");
 		if (!hMap) {
 			MessageBoxA(NULL, "MMf not found", "Debug", NULL);
 			return 0;
 		}
-		HANDLE mView = MapViewOfFile(hMap, FILE_MAP_READ, 0, 0, 71);
+		HANDLE mView = MapViewOfFile(hMap, FILE_MAP_READ, 0, 0, profsize);
 		if (!mView) {
 			CloseHandle(hMap);
 			MessageBoxA(NULL, "MMf not found", "Debug", NULL);
 			return 0;
 		}
 
-		memcpy(&Prof, mView, 71);
+		memcpy(&Prof, mView, profsize);
 		UnmapViewOfFile(mView);
 		CloseHandle(hMap);
 
@@ -53,7 +59,7 @@ BOOL APIENTRY DllMain( HMODULE hModule, DWORD  ul_reason_for_call, LPVOID lpRese
 		PathRemoveFileSpec(Vars.szScriptPath);
 		strcat_s(Vars.szScriptPath, MAX_PATH, "\\Scripts\\");
 
-		//CheckStruct();
+		//CheckStruct();// comment out or remove later
 		HANDLE hD2Thread;
 		if ((hD2Thread = CreateThread(NULL, NULL, MainThread, NULL, NULL, NULL)) == NULL)
 			//return FALSE;

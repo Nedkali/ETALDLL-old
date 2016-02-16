@@ -10,8 +10,13 @@
 struct Profile {
 	char Account[24];
 	char AccPass[12];
+	char MpqFile[32];
+	char GameName[8];	
+	char GamePass[6];
 	char Charloc;
 	char Realm;
+	char RandomGameName;
+	char RandomGamePass;
 	char Difficulty;
 	char ScriptFile[32];
 };
