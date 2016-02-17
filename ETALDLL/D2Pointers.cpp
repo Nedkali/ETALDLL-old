@@ -46,8 +46,9 @@ DWORD Pointer::GetDllOffset(int num)
 		return 0;
 	return Pointer::GetDllOffset(dlls[num & 0xff], num >> 8);
 }
-BOOL Pointer::ADDRawKeys(const char* classic, const char* lod)
+BOOL Pointer::ADDRawKeys(const char* owner, const char* classic, const char* lod)
 {
+	strncat_s(Vars.szKeyOwner, owner, strlen(owner)); //for add in later
 	strncat_s(Vars.szClassic, classic, strlen(classic));
 	strncat_s(Vars.szLod, lod, strlen(lod));
 

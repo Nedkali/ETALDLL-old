@@ -33,9 +33,10 @@ DWORD WINAPI MainThread(VOID* param)
 
 	if (Vars.bzUseRawKeys)
 	{
-		if (Pointer::ADDRawKeys(Prof.Classic, Prof.Lod))
+		if (Pointer::ADDRawKeys(Prof.KeyOwner, Prof.Classic, Prof.Lod))
 		{
-			SendCopyData(11, "Loading Raw Keys");
+			SendCopyData(11, "Loaded Raw Keys");
+			SendCopyData(11, Vars.szKeyOwner);
 			SendCopyData(11, Vars.szClassic);
 			SendCopyData(11, Vars.szLod);
 		}

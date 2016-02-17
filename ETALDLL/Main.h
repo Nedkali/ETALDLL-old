@@ -31,6 +31,7 @@ struct Variables
 	char	szMpqfile[MAX_PATH];
 	char	szClassic[30];
 	char	szLod[30];
+	char	szKeyOwner[30];
 	bool	bzladder;
 	unsigned int iCharPos;
 	BOOL	bzUseRawKeys;

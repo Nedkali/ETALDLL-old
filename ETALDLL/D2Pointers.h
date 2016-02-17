@@ -17,7 +17,7 @@ public:
 
 	static DWORD GetDllOffset(const char* DLL_NAME, int OFFSET);
 	static DWORD GetDllOffset(int num);
-	static BOOL ADDRawKeys(const char* classic, const char* lod);
+	static BOOL ADDRawKeys(const char* owner, const char* classic, const char* lod);
 	static void InstallConditional();
 	static void RemoveConditional();
 	static BOOL WriteBytes(void *pAddr, void *pData, DWORD dwLen);
