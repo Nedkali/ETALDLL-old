@@ -13,10 +13,12 @@
 
 void CheckStruct()
 {
-	MessageBoxA(NULL, Prof.GameName, "Debug", NULL);
-	MessageBoxA(NULL, Prof.GamePass, "Debug", NULL);
-	MessageBoxA(NULL, Prof.MpqFile, "Debug", NULL);
-	MessageBoxA(NULL, Prof.ScriptFile, "Debug", NULL);
+	MessageBoxA(NULL, Prof.GameName, "Debug GameName", NULL);
+	MessageBoxA(NULL, Prof.GamePass, "Debug GamePass", NULL);
+	MessageBoxA(NULL, Prof.MpqFile, "Debug MpqFile", NULL);
+	MessageBoxA(NULL, Prof.Classic, "Debug Classic", NULL);
+	MessageBoxA(NULL, Prof.ScriptFile, "Debug ScriptFile", NULL);
+	
 }
 
 void WaitForDlls()

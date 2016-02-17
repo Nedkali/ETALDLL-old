@@ -31,17 +31,13 @@ DWORD WINAPI MainThread(VOID* param)
 	bool starter = true;
 	bool ingame = false;
 
-	const char *ckey = (char*)"CLASSIC_KEY_NO_DASHES";
-	int len = strlen(ckey);
-	strncat_s(Prof.Classic, ckey, len);
+	strncat_s(Vars.szClassic, Prof.Classic, strlen(Prof.Classic));
+	strncat_s(Vars.szLod, Prof.Lod, strlen(Prof.Lod));
 
-	const char *xkey = (char*)"XPAC_KEY_NO_DASHES";
-	int len1 = strlen(xkey);
-	strncat_s(Prof.Lod , xkey, len1);
-	if (Prof.Classic && Vars.szLod != NULL) {
+	if (Prof.Classic && Prof.Lod != NULL) {
 		SendCopyData(11, "Loading Raw Keys");
-		SendCopyData(11, Prof.Classic);
-		SendCopyData(11, Prof.Lod);
+		SendCopyData(11, Vars.szClassic);
+		SendCopyData(11, Vars.szLod);
 	}
 	Pointer::InstallConditional();
 
