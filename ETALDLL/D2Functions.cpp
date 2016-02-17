@@ -31,6 +31,8 @@ DWORD WINAPI MainThread(VOID* param)
 	bool starter = true;
 	bool ingame = false;
 
+	#pragma region Key_Handling
+
 	if (Vars.bzUseRawKeys)
 	{
 		if (Pointer::ADDRawKeys(Prof.KeyOwner, Prof.Classic, Prof.Lod))
@@ -44,6 +46,21 @@ DWORD WINAPI MainThread(VOID* param)
 			SendCopyData(11, "Error Loading Raw Keys");
 		}
 	}
+	//this will be changed later on, once we actually get mpq files loading
+	else if (Vars.bzUseRawKeys == false) 
+	{
+		if (Pointer::LoadCDKeyMPQ(Prof.MpqFile, "KEY"))
+		{
+			SendCopyData(11, "Loaded Key MPQ");
+			SendCopyData(11, Vars.szMpqfile);
+		}
+		else {
+			SendCopyData(11, "Error Loading Key MPQ");
+		}
+		
+	}
+
+	#pragma endregion
 
 	while (true)
 	{

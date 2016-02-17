@@ -2,7 +2,7 @@
 // OOG.cpp
 //////////////////////////////////////////////////////////////////////
 #include "OOG.h"
-
+#include "D2Pointers.h"
 
 OOG::OOG(void)
 {
@@ -13,6 +13,13 @@ OOG::OOG(void)
 OOG::~OOG(void)
 {
 
+}
+
+void LoadMPQ(const char* mpq, char* mpqname)
+{
+	D2WIN_InitMPQ("D2Win.dll", mpq, mpqname, 0, 0);
+	*p_BNCLIENT_XPacKey = *p_BNCLIENT_ClassicKey = *p_BNCLIENT_KeyOwner = NULL;
+	BNCLIENT_DecodeAndLoadKeys();
 }
 
 OOG_Location OOG::GetLocationID()

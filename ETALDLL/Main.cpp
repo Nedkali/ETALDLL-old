@@ -66,6 +66,10 @@ BOOL APIENTRY DllMain( HMODULE hModule, DWORD  ul_reason_for_call, LPVOID lpRese
 		{
 			Vars.bzUseRawKeys = true;
 		}
+
+		//for mpq testing
+		//Vars.bzUseRawKeys = false;
+
 		//CheckStruct();// comment out or remove later
 		HANDLE hD2Thread;
 		if ((hD2Thread = CreateThread(NULL, NULL, MainThread, NULL, NULL, NULL)) == NULL)

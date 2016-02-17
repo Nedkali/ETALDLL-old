@@ -4,6 +4,7 @@
 #define DEFINE_POINTERS
 #include "D2Pointers.h"
 #include "Patch.h"
+#include "OOG.h"
 
 #ifndef ArraySize
 #define ArraySize(x) (sizeof((x)) / sizeof((x)[0]))
@@ -46,6 +47,22 @@ DWORD Pointer::GetDllOffset(int num)
 		return 0;
 	return Pointer::GetDllOffset(dlls[num & 0xff], num >> 8);
 }
+BOOL Pointer::LoadCDKeyMPQ(const char* mpq, char* mpqname)
+{
+	mpq = "key3.mpq";
+	strncat_s(Vars.szMpqfile, mpq, strlen(mpq));
+	LPCSTR word = Vars.szMpqfile;
+
+	if (Vars.szMpqfile != NULL)
+	{
+		MessageBox(NULL, mpq, Vars.szMpqfile, NULL);
+
+		LoadMPQ(Vars.szMpqfile, mpqname);
+		return true;
+	}
+
+	return false;
+}
 BOOL Pointer::ADDRawKeys(const char* owner, const char* classic, const char* lod)
 {
 	strncat_s(Vars.szKeyOwner, owner, strlen(owner)); //for add in later
@@ -53,27 +70,27 @@ BOOL Pointer::ADDRawKeys(const char* owner, const char* classic, const char* lod
 	strncat_s(Vars.szLod, lod, strlen(lod));
 
 	if (classic && lod != NULL) {
-		Pointer::InstallConditional();
+		Pointer::InstallRawInfo();
 		return true;
 	}
 	return false;
 }
-void Pointer::InstallConditional()
+void Pointer::InstallRawInfo()
 {
-	for (int x = 0; x < ArraySize(Conditional); x++)
+	for (int x = 0; x < ArraySize(RawKeyInfo); x++)
 	{
-		Conditional[x].bOldCode = new BYTE[Conditional[x].dwLen];
-		::ReadProcessMemory(GetCurrentProcess(), (void*)Conditional[x].dwAddr, Conditional[x].bOldCode, Conditional[x].dwLen, NULL);
-		Conditional[x].pFunc(Conditional[x].dwAddr, Conditional[x].dwFunc, Conditional[x].dwLen);
+		RawKeyInfo[x].bOldCode = new BYTE[RawKeyInfo[x].dwLen];
+		::ReadProcessMemory(GetCurrentProcess(), (void*)RawKeyInfo[x].dwAddr, RawKeyInfo[x].bOldCode, RawKeyInfo[x].dwLen, NULL);
+		RawKeyInfo[x].pFunc(RawKeyInfo[x].dwAddr, RawKeyInfo[x].dwFunc, RawKeyInfo[x].dwLen);
 	}
 }
 
 void Pointer::RemoveConditional()
 {
-	for (int x = 0; x < ArraySize(Conditional); x++)
+	for (int x = 0; x < ArraySize(RawKeyInfo); x++)
 	{
-		Pointer::WriteBytes((void*)Conditional[x].dwAddr, Conditional[x].bOldCode, Conditional[x].dwLen);
-		delete[] Conditional[x].bOldCode;
+		Pointer::WriteBytes((void*)RawKeyInfo[x].dwAddr, RawKeyInfo[x].bOldCode, RawKeyInfo[x].dwLen);
+		delete[] RawKeyInfo[x].bOldCode;
 	}
 }
 

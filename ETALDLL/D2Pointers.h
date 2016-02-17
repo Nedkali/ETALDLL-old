@@ -17,8 +17,9 @@ public:
 
 	static DWORD GetDllOffset(const char* DLL_NAME, int OFFSET);
 	static DWORD GetDllOffset(int num);
+	static BOOL LoadCDKeyMPQ(const char* mpq, char* mpqname);
 	static BOOL ADDRawKeys(const char* owner, const char* classic, const char* lod);
-	static void InstallConditional();
+	static void InstallRawInfo();
 	static void RemoveConditional();
 	static BOOL WriteBytes(void *pAddr, void *pData, DWORD dwLen);
 	static void FillBytes(void *pAddr, BYTE bFill, DWORD dwLen);
@@ -35,15 +36,22 @@ private:
 // Pointer declarations
 //////////////////////////////////////////////////////////////////////
 #ifdef DEFINE_POINTERS
+enum { DLLNO_D2CLIENT, DLLNO_D2COMMON, DLLNO_D2GFX, DLLNO_D2LANG, DLLNO_D2WIN, DLLNO_D2NET, DLLNO_D2GAME, DLLNO_D2LAUNCH, DLLNO_FOG, DLLNO_BNCLIENT, DLLNO_STORM, DLLNO_D2CMP, DLLNO_D2MULTI };
+
+#define DLLOFFSET(a1,b1) ((DLLNO_##a1)|((b1)<<8))
+#define FUNCPTR(d1,v1,t1,t2,o1)	typedef t1 d1##_##v1##_t t2; d1##_##v1##_t *d1##_##v1 = (d1##_##v1##_t *)DLLOFFSET(d1,o1);
 #define FPTR(CALL_TYPE, FUNC_NAME, PARAMETERS, DLL, OFFSET) typedef CALL_TYPE fp##FUNC_NAME##_t PARAMETERS; fp##FUNC_NAME##_t* fp##FUNC_NAME = (fp##FUNC_NAME##_t*)Pointer::GetDllOffset(DLL, OFFSET);
 #define VPTR(VAR_TYPE, VAR_NAME, DLL, OFFSET) typedef VAR_TYPE VAR_NAME##_t; VAR_NAME##_t* vp##VAR_NAME = (VAR_NAME##_t*)Pointer::GetDllOffset(DLL, OFFSET);
 #define APTR(ASM_NAME, DLL, OFFSET) extern DWORD ap##ASM_NAME;
+#define VARPTR(d1,v1,t1,o1)		typedef t1 d1##_##v1##_t;    d1##_##v1##_t *p_##d1##_##v1 = (d1##_##v1##_t *)DLLOFFSET(d1,o1);
 
 //#define APTR(ASM_NAME, DLL, OFFSET) extern DWORD* Asm_##dll##_##name##(VOID); static DWORD dll##_##name = *Asm_##dll##_##name##();
 #else
 #define FPTR(CALL_TYPE, FUNC_NAME, PARAMETERS, DLL, OFFSET) typedef CALL_TYPE fp##FUNC_NAME##_t PARAMETERS; extern fp##FUNC_NAME##_t* fp##FUNC_NAME;
 #define VPTR(VAR_TYPE, VAR_NAME, DLL, OFFSET) typedef VAR_TYPE VAR_NAME##_t; extern VAR_NAME##_t* vp##VAR_NAME;
 #define APTR(ASM_NAME, DLL, OFFSET) extern DWORD ap##ASM_NAME;
+#define VARPTR(d1,v1,t1,o1)		typedef t1 d1##_##v1##_t;    extern d1##_##v1##_t *p_##d1##_##v1;
+#define FUNCPTR(d1,v1,t1,t2,o1)	typedef t1 d1##_##v1##_t t2; extern d1##_##v1##_t *d1##_##v1;
 
 //#define APTR(ASM_NAME, DLL, OFFSET) extern DWORD* Asm_##dll##_##name##(VOID); static DWORD dll##_##name = *Asm_##dll##_##name##();
 #endif
@@ -146,7 +154,7 @@ VPTR(Control*, FirstControl, "D2Win.dll", 0x8DB34)
 //////////////////////////////////////////////////////////////////////
 // D2GFX Function Pointers
 //////////////////////////////////////////////////////////////////////
-FPTR(HWND __stdcall, GetHwnd, (void), "D2Gfx.dll", 0xB0C0)
+FPTR(HWND __stdcall, GetHwnd, (void), "D2gfx.dll", 0xB0C0)
 
 FPTR(DWORD __stdcall, InitMPQ, (char *dll, const char *mpqfile, char *mpqname, int v4, int v5), "D2Win.dll", 0x7E50)
 FPTR(char __cdecl, DecodeAndLoadKeys, (), "Bnclient.dll", 0x10920)
@@ -154,12 +162,28 @@ FPTR(char __cdecl, DecodeAndLoadKeys, (), "Bnclient.dll", 0x10920)
 // D2Game Functions
 ////////////////////////////////////////////////////////////////////////////////////////////////
 
+FUNCPTR(D2GAME, Rand, DWORD __fastcall, (DWORD* seed), 0x1050)
 
+////////////////////////////////////////////////////////////////////////////////////////////////
+// Bnclient Variable Pointers
+////////////////////////////////////////////////////////////////////////////////////////////////
+
+//these are just added for the LoadMPQ
+//we can rewrite these to use your struct but I think it's nice like this
+//since you can call it like BNCLIENT_CLassicKey or D2WIN_InitMPQ
+FUNCPTR(D2WIN, InitMPQ, DWORD __stdcall, (char *dll, const char *mpqfile, char *mpqname, int v4, int v5), 0x7E50)
+VARPTR(BNCLIENT, ClassicKey, char*, 0x1E928)
+VARPTR(BNCLIENT, XPacKey, char*, 0x1E930)
+VARPTR(BNCLIENT, KeyOwner, char*, 0x1E934)
+FUNCPTR(BNCLIENT, DecodeAndLoadKeys, char __cdecl, (), 0x10920)
+
+#define _D2PTRS_END	D2GAME_Rand
 
 #undef FPTR
 #undef VPTR
 #undef APTR
-
+#undef VARPTR
+#undef FUNCPTR
 
 #define D2CLIENT_TestPvpFlag(dwId1, dwId2, dwFlag)		(D2CLIENT_TestPvpFlag_STUB(dwId1, dwId2, dwFlag))
 #define D2CLIENT_GetUIState(dwVarNo)					(D2CLIENT_GetUIVar_STUB(dwVarNo))

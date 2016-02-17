@@ -20,6 +20,8 @@
 DWORD WINAPI MainThread(VOID*);
 VOID __fastcall ClassicSTUB();
 VOID __fastcall LodSTUB();
+VOID __fastcall NameSTUB();
+void LoadMPQ(const char* mpq, char* mpqname);
 void  Logincontrol();
 
 enum ClientGameState

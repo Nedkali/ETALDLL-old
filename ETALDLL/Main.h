@@ -34,7 +34,7 @@ struct Variables
 	char	szKeyOwner[30];
 	bool	bzladder;
 	unsigned int iCharPos;
-	BOOL	bzUseRawKeys;
+	bool	bzUseRawKeys;
 	HMODULE hModule;
 };
 
