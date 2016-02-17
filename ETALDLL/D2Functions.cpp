@@ -31,15 +31,18 @@ DWORD WINAPI MainThread(VOID* param)
 	bool starter = true;
 	bool ingame = false;
 
-	strncat_s(Vars.szClassic, Prof.Classic, strlen(Prof.Classic));
-	strncat_s(Vars.szLod, Prof.Lod, strlen(Prof.Lod));
-
-	if (Prof.Classic && Prof.Lod != NULL) {
-		SendCopyData(11, "Loading Raw Keys");
-		SendCopyData(11, Vars.szClassic);
-		SendCopyData(11, Vars.szLod);
+	if (Vars.bzUseRawKeys)
+	{
+		if (Pointer::ADDRawKeys(Prof.Classic, Prof.Lod))
+		{
+			SendCopyData(11, "Loading Raw Keys");
+			SendCopyData(11, Vars.szClassic);
+			SendCopyData(11, Vars.szLod);
+		}
+		else {
+			SendCopyData(11, "Error Loading Raw Keys");
+		}
 	}
-	Pointer::InstallConditional();
 
 	while (true)
 	{

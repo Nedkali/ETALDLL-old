@@ -33,7 +33,7 @@ struct Variables
 	char	szLod[30];
 	bool	bzladder;
 	unsigned int iCharPos;
-
+	BOOL	bzUseRawKeys;
 	HMODULE hModule;
 };
 

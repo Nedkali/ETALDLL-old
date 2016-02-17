@@ -37,6 +37,26 @@ DWORD Pointer::GetDllOffset(const char* DLL_NAME, int OFFSET)
 	return (DWORD)hMod + OFFSET;
 }
 
+DWORD Pointer::GetDllOffset(int num)
+{
+	static char *dlls[] = { "D2Client.DLL", "D2Common.dll", "D2gfx.dll", "D2Lang.dll",
+		"D2Win.dll", "D2Net.dll", "D2Game.dll", "D2Launch.dll", "Fog.dll", "Bnclient.dll",
+		"Storm.dll", "D2CMP.dll", "D2Multi.dll" };
+	if ((num & 0xff) > 12)
+		return 0;
+	return Pointer::GetDllOffset(dlls[num & 0xff], num >> 8);
+}
+BOOL Pointer::ADDRawKeys(const char* classic, const char* lod)
+{
+	strncat_s(Vars.szClassic, classic, strlen(classic));
+	strncat_s(Vars.szLod, lod, strlen(lod));
+
+	if (classic && lod != NULL) {
+		Pointer::InstallConditional();
+		return true;
+	}
+	return false;
+}
 void Pointer::InstallConditional()
 {
 	for (int x = 0; x < ArraySize(Conditional); x++)

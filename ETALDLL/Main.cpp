@@ -25,7 +25,7 @@ void WaitForDlls()
 {
 	unsigned int v = 0;
 	do {
-		Sleep(500);
+		Sleep(100);
 		if (GetModuleHandle("Bnclient.dll") && GetModuleHandle("D2Launch.dll") && GetModuleHandle("D2Net.dll") && GetModuleHandle("D2Win.dll"))
 			break;
 		++v;
@@ -62,6 +62,10 @@ BOOL APIENTRY DllMain( HMODULE hModule, DWORD  ul_reason_for_call, LPVOID lpRese
 		PathRemoveFileSpec(Vars.szScriptPath);
 		strcat_s(Vars.szScriptPath, MAX_PATH, "\\Scripts\\");
 
+		if (Prof.Classic && Prof.Lod != NULL) 
+		{
+			Vars.bzUseRawKeys = true;
+		}
 		//CheckStruct();// comment out or remove later
 		HANDLE hD2Thread;
 		if ((hD2Thread = CreateThread(NULL, NULL, MainThread, NULL, NULL, NULL)) == NULL)
