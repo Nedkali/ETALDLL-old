@@ -22,9 +22,6 @@
     <ClCompile Include="D2Intercepts.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Offset.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="D2Structs.h">

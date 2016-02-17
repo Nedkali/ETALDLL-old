@@ -169,7 +169,6 @@
   <ItemGroup>
     <ClCompile Include="Common.cpp" />
     <ClCompile Include="D2Intercepts.cpp" />
-    <ClCompile Include="Offset.cpp" />
     <ClCompile Include="OOG.cpp" />
     <ClCompile Include="D2Functions.cpp" />
     <ClCompile Include="D2Pointers.cpp" />

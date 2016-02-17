@@ -43,7 +43,7 @@ DWORD WINAPI MainThread(VOID* param)
 		SendCopyData(11, Vars.szClassic);
 		SendCopyData(11, Vars.szLod);
 	}
-	InstallConditional();
+	Pointer::InstallConditional();
 
 	while (true)
 	{

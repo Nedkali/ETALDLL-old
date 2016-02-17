@@ -16,6 +16,14 @@ public:
 	~Pointer();
 
 	static DWORD GetDllOffset(const char* DLL_NAME, int OFFSET);
+	static void InstallConditional();
+	static void RemoveConditional();
+	static BOOL WriteBytes(void *pAddr, void *pData, DWORD dwLen);
+	static void FillBytes(void *pAddr, BYTE bFill, DWORD dwLen);
+	static void InterceptLocalCode(BYTE bInst, DWORD pAddr, DWORD pFunc, DWORD dwLen);
+	static void PatchCall(DWORD dwAddr, DWORD dwFunc, DWORD dwLen);
+	static void PatchJmp(DWORD dwAddr, DWORD dwFunc, DWORD dwLen);
+	static void PatchBytes(DWORD dwAddr, DWORD dwValue, DWORD dwLen);
 private:
 
 };
