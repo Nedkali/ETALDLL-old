@@ -18,10 +18,7 @@
 // Some buttons
 #define BUTTON_SP findControl(CONTROL_BUTTON, 5106, -1, 264,324,272,35)
 DWORD WINAPI MainThread(VOID*);
-VOID __fastcall ClassicSTUB();
-VOID __fastcall LodSTUB();
-VOID __fastcall NameSTUB();
-void LoadMPQ(const char* mpq, char* mpqname);
+void LoadMPQ(const char* mpq);
 void  Logincontrol();
 
 enum ClientGameState

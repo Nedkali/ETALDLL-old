@@ -20,6 +20,14 @@ Pointer::~Pointer()
 
 }
 
+void Pointer::DefineOffsets()
+{
+	DWORD *p = (DWORD *)&_D2PTRS_START;
+	do {
+		*p = Pointer::GetDllOffset(*p);
+	} while (++p <= (DWORD *)&_D2PTRS_END);
+}
+
 DWORD Pointer::GetDllOffset(const char* DLL_NAME, int OFFSET)
 {
 	HMODULE hMod = GetModuleHandle(DLL_NAME);
@@ -37,7 +45,6 @@ DWORD Pointer::GetDllOffset(const char* DLL_NAME, int OFFSET)
 	}
 	return (DWORD)hMod + OFFSET;
 }
-
 DWORD Pointer::GetDllOffset(int num)
 {
 	static char *dlls[] = { "D2Client.DLL", "D2Common.dll", "D2gfx.dll", "D2Lang.dll",
@@ -47,21 +54,22 @@ DWORD Pointer::GetDllOffset(int num)
 		return 0;
 	return Pointer::GetDllOffset(dlls[num & 0xff], num >> 8);
 }
-BOOL Pointer::LoadCDKeyMPQ(const char* mpq, char* mpqname)
+BOOL Pointer::LoadCDKeyMPQ(const char* mpq)
 {
-	mpq = "key3.mpq";
+	if (LoadLibrary("D2gfx.dll") == 0)
+		return false;
+	if (LoadLibrary("D2Win.dll") == 0)
+		return false;
+
 	strncat_s(Vars.szMpqfile, mpq, strlen(mpq));
-	LPCSTR word = Vars.szMpqfile;
 
 	if (Vars.szMpqfile != NULL)
 	{
-		MessageBox(NULL, mpq, Vars.szMpqfile, NULL);
-
-		LoadMPQ(Vars.szMpqfile, mpqname);
+		LoadMPQ(Vars.szMpqfile);
 		return true;
 	}
-
-	return false;
+	else
+		return false;
 }
 BOOL Pointer::ADDRawKeys(const char* owner, const char* classic, const char* lod)
 {
@@ -85,7 +93,7 @@ void Pointer::InstallRawInfo()
 	}
 }
 
-void Pointer::RemoveConditional()
+void Pointer::RemoveRawInfo()
 {
 	for (int x = 0; x < ArraySize(RawKeyInfo); x++)
 	{
@@ -93,7 +101,6 @@ void Pointer::RemoveConditional()
 		delete[] RawKeyInfo[x].bOldCode;
 	}
 }
-
 BOOL Pointer::WriteBytes(void *pAddr, void *pData, DWORD dwLen)
 {
 	DWORD dwOld;

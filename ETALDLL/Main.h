@@ -28,7 +28,7 @@ struct Variables
 {
 	char	szPath[MAX_PATH];
 	char	szScriptPath[MAX_PATH];
-	char	szMpqfile[MAX_PATH];
+	char	szMpqfile[30];
 	char	szClassic[30];
 	char	szLod[30];
 	char	szKeyOwner[30];
