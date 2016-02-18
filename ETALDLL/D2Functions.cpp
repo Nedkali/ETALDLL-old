@@ -46,7 +46,6 @@ DWORD WINAPI MainThread(VOID* param)
 			SendCopyData(11, "Error Loading Raw Keys");
 		}
 	}
-	//this will be changed later on, once we actually get mpq files working
 	else if (Vars.bzUseRawKeys == false)
 	{
 		if (Pointer::LoadCDKeyMPQ(Prof.MpqFile))

@@ -62,12 +62,14 @@ BOOL APIENTRY DllMain( HMODULE hModule, DWORD  ul_reason_for_call, LPVOID lpRese
 		PathRemoveFileSpec(Vars.szScriptPath);
 		strcat_s(Vars.szScriptPath, MAX_PATH, "\\Scripts\\");
 
-		if (Prof.Classic != NULL && Prof.Lod != NULL)
+		if(strlen(Prof.Classic) > 15)
 		{
 			Vars.bzUseRawKeys = true;
 		}
-
-		//Vars.bzUseRawKeys = false; //Uncomment to use MPQ file
+		else 
+		{
+			Vars.bzUseRawKeys = false;
+		}
 
 		Pointer::DefineOffsets();
 

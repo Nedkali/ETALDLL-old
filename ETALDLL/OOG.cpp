@@ -17,8 +17,8 @@ OOG::~OOG(void)
 
 void LoadMPQ(const char* mpq)
 {
-	D2WIN_InitMPQ("D2Win.dll", mpq, NULL, 0, 0);
-	//*p_BNCLIENT_XPacKey = *p_BNCLIENT_ClassicKey = *p_BNCLIENT_KeyOwner = NULL;
+	D2WIN_InitMPQ("D2Win.DLL", mpq, NULL, 0, 0);
+	*p_BNCLIENT_XPacKey = *p_BNCLIENT_ClassicKey = *p_BNCLIENT_KeyOwner = NULL;
 	BNCLIENT_DecodeAndLoadKeys();
 }
 
